@@ -14,8 +14,8 @@ export const App = (props: AppProps) => {
     <SvgContainer
       builderFn={buildChart}
       data={profileData}
-      height={1000}
-      width={600}
+      height={500}
+      width={700}
     />
   );
 };

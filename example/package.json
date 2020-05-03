@@ -1,17 +1,14 @@
 {
-  "name": "ts-wasm",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "homepage": "https://elsatellite.github.io/assemblyscript-live-loader/",
-  "scripts": {
-    "start": "webpack-dev-server --progress --inline --hot",
-    "build": "webpack",
-    "deploy": "gh-pages -d public -r https://github.com/elsatellite/assemblyscript-live-loader",
-    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix"
-  },
   "author": "",
-  "license": "MIT",
+  "dependencies": {
+    "@emotion/core": "^10.0.28",
+    "@emotion/styled": "^10.0.27",
+    "d3": "^5.16.0",
+    "microtime": "^3.0.0",
+    "react": "^16.7.1",
+    "react-dom": "^16.7.1"
+  },
+  "description": "",
   "devDependencies": {
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.7",
@@ -36,12 +33,16 @@
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
   },
-  "dependencies": {
-    "@emotion/core": "^10.0.28",
-    "@emotion/styled": "^10.0.27",
-    "d3": "^5.16.0",
-    "microtime": "^3.0.0",
-    "react": "^16.7.1",
-    "react-dom": "^16.7.1"
-  }
+  "homepage": ".",
+  "license": "MIT",
+  "main": "index.js",
+  "name": "ts-wasm",
+  "scripts": {
+    "build": "webpack",
+    "deploy": "gh-pages -b master -d public",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "predeploy": "npm run build",
+    "start": "webpack-dev-server --progress --inline --hot"
+  },
+  "version": "1.0.0"
 }
