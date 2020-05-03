@@ -4,7 +4,6 @@
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
     "d3": "^5.16.0",
-    "microtime": "^3.0.0",
     "react": "^16.7.1",
     "react-dom": "^16.7.1"
   },
@@ -33,13 +32,11 @@
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
   },
-  "homepage": ".",
   "license": "MIT",
-  "main": "index.js",
   "name": "ts-wasm",
   "scripts": {
     "build": "webpack",
-    "deploy": "gh-pages -b master -d public",
+    "deploy": "gh-pages -d public -r https://github.com/elsatellite/assemblyscript-live-loader",
     "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
     "predeploy": "npm run build",
     "start": "webpack-dev-server --progress --inline --hot"
