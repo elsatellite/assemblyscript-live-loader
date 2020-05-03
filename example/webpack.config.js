@@ -43,7 +43,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: 'Elsa Pako',
+      title: 'WebAssembly Benchmark',
       template: './src/index.html',
       inject: true,
     }),
