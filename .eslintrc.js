@@ -1,6 +1,5 @@
 module.exports = {
-    env: {
-        jasmine: true
-    },
-    extends: 'tui'
+  env: {
+    jasmine: true,
+  },
 };

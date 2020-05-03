@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <style rel="stylesheet" type="text/css" href="./styles.css"></style>
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <script type="application/javascript">
+      // Check for wasm support.
+      if (!('WebAssembly' in window)) {
+        alert('you need a browser with wasm support enabled :(');
+      }
+    </script>
+  </head>
+  <body>
+    <div id="example"></div>
+  </body>
+</html>

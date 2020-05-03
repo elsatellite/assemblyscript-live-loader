@@ -1,10 +1,9 @@
-import { Compiler, CompilerTarget, CompilerMemoryModel } from 'assemblyscript';
-import * as ts from 'typescript';
-import * as path from 'path';
-import * as fs from 'fs';
+import asc = require("assemblyscript/cli/asc.js");
+import * as ts from "typescript";
+import * as fs from "fs";
 
-const wasmFooterPath: string = __dirname + '/wasmFooter.js';
-const wasmFooter: string = fs.readFileSync(wasmFooterPath, 'utf-8');
+const wasmFooterPath: string = __dirname + "/wasmFooter.js";
+const wasmFooter: string = fs.readFileSync(wasmFooterPath, "utf-8");
 
 /**
  * compile assemblyscript to WebAssembly(wasm)
@@ -12,28 +11,13 @@ const wasmFooter: string = fs.readFileSync(wasmFooterPath, 'utf-8');
  * @returns {Buffer} wasm stream as a Buffer
  */
 function compile(source: string): Buffer {
-    const module = Compiler.compileString(source, {
-        target: CompilerTarget.WASM32,
-        memoryModel: CompilerMemoryModel.MALLOC,
-        silent: true
-    });
-    let wasmFile: Uint8Array;
+  const module = asc.compileString(source, {
+    optimizeLevel: 3,
+    runtime: "none",
+    validate: true,
+  });
 
-    if (!module) {
-        throw Error('compilation failed');
-    }
-
-    module.optimize();
-
-    if (!module.validate()) {
-        throw Error('validation failed');
-    }
-
-    wasmFile = module.emitBinary();
-
-    module.dispose();
-
-    return new Buffer(wasmFile);
+  return Buffer.from(module.binary);
 }
 
 /**
@@ -42,21 +26,22 @@ function compile(source: string): Buffer {
  * @param {Buffer} wasm WebAssembly Buffer
  * @returns {string} module string
  */
-function createWasmModule(source: string, wasm: Buffer): string {
-    const { length }: {
-        length: number
-    } = wasm;
-    const buffer: Array<number> = [];
-    for (let i = 0; i < length; i += 1) {
-        buffer.push(wasm[i]);
-    }
-    const module = 
-        `var buffer = new ArrayBuffer(${wasm.length});
+function createWasmModule(wasm: Buffer): string {
+  const {
+    length,
+  }: {
+    length: number;
+  } = wasm;
+  const buffer: Array<number> = [];
+  for (let i = 0; i < length; i += 1) {
+    buffer.push(wasm[i]);
+  }
+  const module = `var buffer = new ArrayBuffer(${wasm.length});
         var uint8 = new Uint8Array(buffer);
-        uint8.set([${buffer.join(',')}]);
+        uint8.set([${buffer.join(",")}]);
         ${wasmFooter}`;
 
-    return module;
+  return module;
 }
 
 /**
@@ -65,16 +50,16 @@ function createWasmModule(source: string, wasm: Buffer): string {
  * @returns {string} module string
  */
 function createJsModule(source: string): string {
-    const compilerOptions = {
-        compilerOptions: {
-            target: ts.ScriptTarget.ES5,
-            module: ts.ModuleKind.CommonJS,
-            alwaysStrict: false
-        }
-    };
-    const transpiled = ts.transpileModule(source, compilerOptions);
+  const compilerOptions = {
+    compilerOptions: {
+      target: ts.ScriptTarget.ES5,
+      module: ts.ModuleKind.CommonJS,
+      alwaysStrict: false,
+    },
+  };
+  const transpiled = ts.transpileModule(source, compilerOptions);
 
-    return transpiled.outputText;
+  return transpiled.outputText;
 }
 
 /**
@@ -96,7 +81,7 @@ function createJsModule(source: string): string {
  * @returns {string} module string
  */
 function createCompatibleModule(jsModule: string, wasmModule: string): string {
-    const module: string = `var compatibleModule;
+  const module: string = `var compatibleModule;
         if (typeof WebAssembly !== 'undefined') {
             ${wasmModule}
             compatibleModule = WebAssemblyModule;
@@ -108,7 +93,7 @@ function createCompatibleModule(jsModule: string, wasmModule: string): string {
         }
         module.exports = compatibleModule;`;
 
-    return module;
+  return module;
 }
 
 /**
@@ -116,20 +101,21 @@ function createCompatibleModule(jsModule: string, wasmModule: string): string {
  * @param {string} source - assemblyscript source file
  * @returns {string} module string
  */
-function AssemblyScriptLiveLoader(source: string): string {
-    let jsModule: string;
-    let wasmModule: string;
+async function AssemblyScriptLiveLoader(source: string): Promise<string> {
+  await asc.ready;
 
-    if (this.cacheable) {
-        this.cacheable();
-    }
+  if (this.cacheable) {
+    this.cacheable();
+  }
 
-    this.addDependency(wasmFooterPath);
+  const callback = this.async();
 
-    jsModule = createJsModule(source);
-    wasmModule = createWasmModule(source, compile(source));
+  this.addDependency(wasmFooterPath);
 
-    return createCompatibleModule(jsModule, wasmModule);
+  const jsModule = createJsModule(source);
+  const wasmModule = createWasmModule(compile(source));
+
+  return callback(null, createCompatibleModule(jsModule, wasmModule));
 }
 
 export default AssemblyScriptLiveLoader;
