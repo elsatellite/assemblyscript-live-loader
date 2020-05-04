@@ -1,5 +1,10 @@
 module.exports = {
   env: {
-    jasmine: true,
+    jasmine: true
   },
+  parserOptions: {
+    allowImportExportEverywhere: true,
+    ecmaVersion: 8,
+    sourceType: "module"
+  }
 };

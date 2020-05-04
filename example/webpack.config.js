@@ -12,13 +12,15 @@ module.exports = {
   module: {
     rules: [
       {
-        exclude: '/node_modules/',
         test: /\.asc$/,
+        exclude: /node_modules/,
         use: '../lib/index.js',
       },
       {
-        exclude: /node_modules/,
         test: /\.ts(x?)$/,
+        exclude: /node_modules/,
+        include: path.resolve(__dirname, './src'),
+
         use: [
           {
             loader: 'ts-loader',
@@ -52,6 +54,6 @@ module.exports = {
     }),
   ],
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx', '.css'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.css', '.as.ts'],
   },
 };

@@ -10,8 +10,25 @@ export interface SvgBuilderOptions {
 }
 
 interface ChartBuilderOptions extends SvgBuilderOptions {
-  data: ProfileData;
+  data: ProfileData[];
 }
+
+const getMaxX = (data: ProfileData[]) => {
+  return Math.max(...data.map((datum) => datum.times.slice(-1)[0]));
+};
+
+const getMaxY = (data: ProfileData[]) => {
+  return data[0].times.length;
+};
+
+const getLine = ({ profileData, x, y }) => {
+  const { times } = profileData;
+
+  const scaledData = times.map((time, i) => [x(time), y(i)]);
+  const line = d3.line()(scaledData);
+
+  return line;
+};
 
 export const buildChart = ({
   data,
@@ -19,16 +36,18 @@ export const buildChart = ({
   ref,
   width,
 }: ChartBuilderOptions): string => {
-  const { precision, times } = data;
+  const { precision } = data[0];
+  const maxX = getMaxX(data);
+  const maxY = getMaxY(data);
 
   const x = d3
     .scaleLinear()
-    .domain([0, times.slice(-1)])
+    .domain([0, maxX])
     .range([margin.left, width - margin.right]);
 
   const y = d3
     .scaleLinear()
-    .domain([0, times.length])
+    .domain([0, maxY + margin.top * 100])
     .range([height - margin.bottom, margin.top]);
 
   const yAxis = (g) =>
@@ -63,8 +82,7 @@ export const buildChart = ({
           .attr('font-weight', 'bold')
       );
 
-  const scaledData = times.map((time, i) => [x(time), y(i)]);
-  const line = d3.line()(scaledData);
+  const lines = data.map((datum) => getLine({ profileData: datum, x, y }));
 
   const _buildChart = () => {
     const svg = d3.select(ref.current).attr('viewBox', [0, 0, width, height]);
@@ -72,15 +90,17 @@ export const buildChart = ({
     svg.append('g').call(yAxis);
     svg.append('g').call(xAxis);
 
-    svg
-      .append('path')
-      .datum(times)
-      .attr('fill', 'none')
-      .attr('stroke', 'steelblue')
-      .attr('stroke-width', 1.5)
-      .attr('stroke-linejoin', 'round')
-      .attr('stroke-linecap', 'round')
-      .attr('d', line);
+    lines.forEach((line, i) => {
+      svg
+        .append('path')
+        // .datum(times)
+        .attr('fill', 'none')
+        .attr('stroke', i % 2 === 0 ? '#edc111' : '#0269AC')
+        .attr('stroke-width', 1.5)
+        .attr('stroke-linejoin', 'round')
+        .attr('stroke-linecap', 'round')
+        .attr('d', line);
+    });
 
     return svg.html();
   };

@@ -1,9 +1,6 @@
 import asc = require("assemblyscript/cli/asc.js");
 import * as ts from "typescript";
-import * as fs from "fs";
-
-const wasmFooterPath: string = __dirname + "/wasmFooter.js";
-const wasmFooter: string = fs.readFileSync(wasmFooterPath, "utf-8");
+import { compatibleModuleTemplate, wasmModuleTemplate } from "./templates";
 
 /**
  * compile assemblyscript to WebAssembly(wasm)
@@ -36,10 +33,7 @@ function createWasmModule(wasm: Buffer): string {
   for (let i = 0; i < length; i += 1) {
     buffer.push(wasm[i]);
   }
-  const module = `var buffer = new ArrayBuffer(${wasm.length});
-        var uint8 = new Uint8Array(buffer);
-        uint8.set([${buffer.join(",")}]);
-        ${wasmFooter}`;
+  const module = wasmModuleTemplate({ wasm, buffer });
 
   return module;
 }
@@ -81,17 +75,7 @@ function createJsModule(source: string): string {
  * @returns {string} module string
  */
 function createCompatibleModule(jsModule: string, wasmModule: string): string {
-  const module: string = `var compatibleModule;
-        if (typeof WebAssembly !== 'undefined') {
-            ${wasmModule}
-            compatibleModule = WebAssemblyModule;
-        }
-        else {
-            ${jsModule}
-            compatibleModule = function() {};
-            compatibleModule.prototype.exports = exports;
-        }
-        module.exports = compatibleModule;`;
+  const module: string = compatibleModuleTemplate({ jsModule, wasmModule });
 
   return module;
 }
@@ -102,15 +86,13 @@ function createCompatibleModule(jsModule: string, wasmModule: string): string {
  * @returns {string} module string
  */
 async function AssemblyScriptLiveLoader(source: string): Promise<string> {
-  await asc.ready;
+  const callback = this.async();
 
   if (this.cacheable) {
     this.cacheable();
   }
 
-  const callback = this.async();
-
-  this.addDependency(wasmFooterPath);
+  await asc.ready;
 
   const jsModule = createJsModule(source);
   const wasmModule = createWasmModule(compile(source));

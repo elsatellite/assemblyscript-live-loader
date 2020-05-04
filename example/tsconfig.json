@@ -1,12 +1,22 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
+    "allowJs": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "./dist/",
     "sourceMap": true,
-    "module": "commonjs",
-    "target": "es6",
-    "jsx": "react"
+    "target": "es5"
   },
-  "types": ["node", "@emotion/core"],
-  "include": ["./**/*.ts", "./**/*.tsx"]
+  "exclude": [
+    "src/assembly"
+  ],
+  "types": [
+    "node",
+    "@emotion/core",
+    "../lib/index.d.ts"
+  ]
 }
