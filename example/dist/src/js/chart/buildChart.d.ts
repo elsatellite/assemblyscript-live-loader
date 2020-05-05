@@ -9,7 +9,7 @@ export declare const padding: {
     top: number;
 };
 export declare const width = 800;
-export declare const height = 500;
+export declare const height = 600;
 export declare const COLOR_JS = "#edc111";
 export declare const COLOR_WASM = "#0269AC";
 export interface SvgBuilderOptions {
