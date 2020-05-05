@@ -1,8 +1,8 @@
 export type ProfilePoint = { operations: number; time: number };
 export type Profile = ProfilePoint[];
 
-const PROFILING_REPETITIONS = 1;
-const PROFILING_PRECISION = 10;
+const PROFILING_REPETITIONS = 10;
+const PROFILING_PRECISION = 1;
 
 export const getExecutionTime = (fn: () => any) => {
   const startTime = performance.now();
@@ -10,7 +10,7 @@ export const getExecutionTime = (fn: () => any) => {
   return startTime - performance.now();
 };
 
-export const profile = ({ fn, nIterations }): Profile => {
+export const computeBenchmarkProfile = ({ fn, nIterations }): Profile => {
   const times = [0];
 
   for (let k = 0; k < PROFILING_REPETITIONS; k++) {

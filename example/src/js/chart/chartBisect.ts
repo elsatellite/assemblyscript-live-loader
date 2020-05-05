@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { Profile, ProfilePoint } from './benchmarkProfiler';
+import { Profile, ProfilePoint } from '../benchmark/benchmarkProfiler';
 import { height, margin } from './buildChart';
 
 export const renderDotsOnMouse = (

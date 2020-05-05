@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
-import { Profile, ProfilePoint } from './benchmarkProfiler';
-import { getViewBoxAtrr as getViewBoxAttr } from './d3Utils';
+import { Profile, ProfilePoint } from '../benchmark/benchmarkProfiler';
+import { getViewBoxAttr } from '../utils/d3Utils';
 import { renderDotsOnMouse } from './chartBisect';
 
 export const margin = { bottom: 30, left: 50, right: 30, top: 20 };

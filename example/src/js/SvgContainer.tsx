@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
-import { SvgBuilderOptions, height, width } from './buildChart';
+import { SvgBuilderOptions, height, width } from './chart/buildChart';
 
 interface Dimensions {
   height: number;
