@@ -3,7 +3,7 @@ export type Profile = ProfilePoint[];
 
 const PROFILING_REPETITIONS = 1;
 const PROFILING_PRECISION = 1;
-const PROFILING_SKIM_COEF = 40;
+const PROFILING_SKIM_COEF = 70;
 
 export const skimArray = <T>({ array, skimCoef }): T[] => {
   return array.filter((_, i) => i % skimCoef === 0);

@@ -1,4 +1,4 @@
-export const appendText = (svg, { id, x, y }) => {
+export const appendText = (svg, { id, x, y, text }) => {
   return svg
     .append('text')
     .attr('font-family', 'sans-serif')
@@ -6,5 +6,7 @@ export const appendText = (svg, { id, x, y }) => {
     .attr('text-anchor', 'left')
     .attr('y', y)
     .attr('x', x)
-    .attr('id', id);
+    .attr('id', id)
+    .text(text);
+    
 };

@@ -1,0 +1,23 @@
+declare function add(a: number, b: number): number;
+declare function subtract(a: number, b: number): number;
+declare function multiply(a: number, b: number): number;
+declare function divide(a: number, b: number): number;
+declare function factorial(num: number): number;
+declare function addWithLoopCount(count: number, a: number, b: number): void;
+declare function subtractWithLoopCount(count: number, a: number, b: number): void;
+declare function multiplyWithLoopCount(count: number, a: number, b: number): void;
+declare function divideWithLoopCount(count: number, a: number, b: number): void;
+declare function factorialWithLoopCount(count: number, num: number): void;
+declare const _default: {
+    add: typeof add;
+    addWithLoopCount: typeof addWithLoopCount;
+    divide: typeof divide;
+    divideWithLoopCount: typeof divideWithLoopCount;
+    factorial: typeof factorial;
+    factorialWithLoopCount: typeof factorialWithLoopCount;
+    multiply: typeof multiply;
+    multiplyWithLoopCount: typeof multiplyWithLoopCount;
+    subtract: typeof subtract;
+    subtractWithLoopCount: typeof subtractWithLoopCount;
+};
+export default _default;
