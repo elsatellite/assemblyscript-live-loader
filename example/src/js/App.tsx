@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import * as d3 from 'd3';
 import { buildChart } from './buildChart';
 import SvgContainer from './SvgContainer';
 import { profile } from './benchmarkProfiler';
@@ -23,8 +24,6 @@ export const App = (props: AppProps) => {
   return (
     <SvgContainer
       builderFn={(args) => buildChart({ ...args, data: [addJS, addWasm] })}
-      height={500}
-      width={700}
     />
   );
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
-import { SvgBuilderOptions } from './buildChart';
+import { SvgBuilderOptions, height, width } from './buildChart';
 
 interface Dimensions {
   height: number;
@@ -14,19 +14,17 @@ const Container = styled('div')<Dimensions>({}, (props) => ({
 
 interface SvgContainerProps {
   builderFn(options: SvgBuilderOptions): string;
-  height: number;
-  width: number;
+  // height: number;
+  // width: number;
 }
 
 const SvgContainer: React.FunctionComponent<SvgContainerProps> = ({
   builderFn,
-  height,
-  width,
 }) => {
   const ref = useRef();
 
   useEffect(() => {
-    builderFn({ height, ref, width } as SvgBuilderOptions);
+    builderFn({ ref } as SvgBuilderOptions);
   }, []);
 
   return (
