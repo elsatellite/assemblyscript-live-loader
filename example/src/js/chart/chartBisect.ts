@@ -1,46 +1,35 @@
 import * as d3 from 'd3';
 import { Profile, ProfilePoint } from '../benchmark/benchmarkProfiler';
 import { height, margin } from './buildChart';
+import { appendText } from './appendText';
 
 export const renderDotsOnMouse = (
   svg,
   {
+    data,
     scaleX,
     scaleY,
-    data,
   }: {
+    data: Profile[];
     scaleX;
     scaleY;
-    data: Profile[];
   }
 ) => {
   const bisect = d3.bisector((d: ProfilePoint) => d.time);
 
   const dot = svg.append('g');
 
-  dot.append('circle').attr('r', 2.5);
+  dot.append('circle').attr('r', 2.5).attr('fill', '#5b727d');
 
-  dot
-    .append('text')
-    .attr('font-family', 'sans-serif')
-    .attr('font-size', 10)
-    .attr('text-anchor', 'left')
-    .attr('y', -20)
-    .attr('id', 'time');
+  dot.call(appendText, { id: 'time', x: 6, y: 28 });
+  dot.call(appendText, { id: 'ops', x: 6, y: 16 });
 
-  dot
-    .append('text')
-    .attr('font-family', 'sans-serif')
-    .attr('font-size', 10)
-    .attr('text-anchor', 'left')
-    .attr('y', -8)
-    .attr('id', 'ops');
-
-  svg
+  const verticalLine = svg
     .append('path')
-    .attr('stroke', 'black')
+    .attr('stroke', '#5b727d')
     .attr('id', 'vertical-line')
-    .attr('fill', 'none');
+    .attr('fill', 'none')
+    .style('stroke-dasharray', '3, 3');
 
   function update(time) {
     const i_array = data.map((datum) => bisect.right(datum, time));
@@ -49,35 +38,31 @@ export const renderDotsOnMouse = (
     if (i < data[0].length) {
       dot.attr(
         'transform',
-        `translate(${scaleX(data[0][i].time)}, ${scaleY(i)})`
+        `translate(${scaleX(data[0][i].time)}, ${scaleY(
+          data[0][i].operations
+        )})`
       );
-      dot.select('#time').text(`${data[0][i].time.toPrecision(3)}ms`);
-      dot.select('#ops').text(`${i * 10} operations`);
-      // marker.attr("cx", x(data[i].date)).attr("cy", y(data[i].close));
+      d3.select('#time').text(`${data[0][i].time.toPrecision(3)}ms`);
+      d3.select('#ops').text(`${data[0][i].operations} operations`);
     }
-
-    // i_array.map((i) => {
-    //   if (i < data[0].times.length) {
-    //     dot.attr('transform', `translate(${y.invert(i)}, ${x(data[0].times[i])})`);
-    //     dot.select('text').text(i * 10);
-    //     // marker.attr("cx", x(data[i].date)).attr("cy", y(data[i].close));
-    //   }
-    // });
-
-    // mutable lookup = new Date(date);
-    // bar.attr("x1", x(mutable lookup)).attr("x2", x(mutable lookup));
   }
 
-  svg.on('mousemove click touchmove', function () {
-    const [mouseX, mouseY] = d3.mouse(this);
-    update(scaleX.invert(mouseX));
-    svg
-      .select('#vertical-line')
-      .attr(
-        'd',
-        `M${mouseX},${height - margin.bottom},${mouseX},${margin.top}`
-      );
-  });
+  let elapsed;
+  let previous;
 
-  // update(mutable lookup);
+  svg.on('mousemove click touchmove', function () {
+    d3.event.preventDefault();
+    elapsed = performance.now() - previous;
+    if (elapsed < 30) return;
+
+    const [mouseX] = d3.mouse(this);
+    // const mouseX = d3.event.pageX - 1;
+    update(scaleX.invert(mouseX));
+    verticalLine.attr(
+      'd',
+      `M${mouseX},${height - margin.bottom},${mouseX},${margin.top}`
+    );
+
+    previous = performance.now();
+  });
 };

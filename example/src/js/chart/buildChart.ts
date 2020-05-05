@@ -91,7 +91,7 @@ export const buildChart = ({ data, ref }: ChartBuilderOptions): string => {
   const _buildChart = () => {
     const svg = d3
       .select(ref.current)
-      .attr('viewBox', getViewBoxAttr({ minY: 0, minX: 0, width, height }));
+      .attr('viewBox', getViewBoxAttr({ height, minX: 0, minY: 0, width }));
 
     svg.append('g').call(yAxis);
     svg.append('g').call(xAxis);
@@ -107,7 +107,7 @@ export const buildChart = ({ data, ref }: ChartBuilderOptions): string => {
         .attr('d', line);
     });
 
-    svg.call(renderDotsOnMouse, { scaleX, scaleY, data });
+    svg.call(renderDotsOnMouse, { data, scaleX, scaleY });
 
     return svg.html();
   };

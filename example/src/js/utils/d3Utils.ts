@@ -1,3 +1,3 @@
-export const getViewBoxAttr = ({ minX, minY, width, height }) => {
+export const getViewBoxAttr = ({ height, minX, minY, width }) => {
   return `${minX} ${minY} ${width} ${height}`;
 };
